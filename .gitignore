@@ -8,6 +8,7 @@ coverageEnv/
 docs/
 lib/
 node_modules/
+dist/
 
 # files
 .DS_Store

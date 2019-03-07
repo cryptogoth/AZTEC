@@ -4,11 +4,16 @@
  * @module deployer
  */
 
-const Tx = require('ethereumjs-tx');
+//const Tx = require('ethereumjs-tx');
 
 const config = require('./config');
 const web3 = require('./web3Listener');
 const wallets = require('./src/wallets');
+const assert = require('chai').assert
+
+const ethjs = require('ethjs')
+const { Wallet, createFromPrivateString } = require('@democracy.js/keys')
+const { getEndpointURL } = require('@democracy.js/utils')
 
 // N.B. you must be running ganache-cli 6.2.5 or greater or this won't work - I think previous versions
 // used EIP-155 to get the transaction hash, instead of hashing the rlp-encoded signed transaction
@@ -47,7 +52,7 @@ deployer.methodWrapper = (methodArguments, options) => {
             from: wallet.address,
             to: contract.contractAddress,
         }));
-        const transaction = new Tx({
+        const transaction = {
             nonce: wallet.nonce,
             gas: web3.utils.toHex(Math.floor(Number(gas) * 1.1)),
             gasPrice: web3.utils.toHex(web3.utils.toWei(config.gasPrice, 'gwei')),
@@ -55,11 +60,18 @@ deployer.methodWrapper = (methodArguments, options) => {
             from: wallet.address,
             to: contract.contractAddress,
             chainId: web3.utils.toHex(await web3.eth.net.getId()),
-        });
+        };
+        const sender = createFromPrivateString(wallet.privateKey.slice(2))
+        // Do the ethjs equivalent of signing and sending a transaction
+        const ethSender = Wallet.createSignerEth(getEndpointURL('test'), sender)
+        const transactionPromise = ethSender.sendTransaction(transaction)
+        const transactionHash = await transactionPromise
+        assert(transactionHash)
+        /*
         transaction.sign(Buffer.from(wallet.privateKey.slice(2), 'hex'));
         const transactionHash = getTransactionHash(transaction);
         const transactionPromise = web3.eth.sendSignedTransaction(`0x${transaction.serialize().toString('hex')}`);
-
+       */ 
         wallets.update(
             wallet.address,
             { nonce: Number(wallet.nonce) + 1 }
@@ -68,6 +80,7 @@ deployer.methodWrapper = (methodArguments, options) => {
             transactionHash,
             transactionPromise,
         };
+       
     };
 };
 
