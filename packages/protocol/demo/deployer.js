@@ -65,15 +65,9 @@ deployer.methodWrapper = (methodArguments, options) => {
             to: contract.contractAddress,
             chainId: web3.utils.toHex(await web3.eth.net.getId()),
         };
-        logger.info(JSON.stringify(transaction))
         const transactionPromise = ethSender.sendTransaction(transaction)
         const transactionHash = await transactionPromise
         assert(transactionHash)
-        /*
-        transaction.sign(Buffer.from(wallet.privateKey.slice(2), 'hex'));
-        const transactionHash = getTransactionHash(transaction);
-        const transactionPromise = web3.eth.sendSignedTransaction(`0x${transaction.serialize().toString('hex')}`);
-       */ 
         wallets.update(
             wallet.address,
             { nonce: Number(wallet.nonce) + 1 }

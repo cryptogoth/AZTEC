@@ -19,11 +19,13 @@ const databaseObject = low(adapter);
 
 const walletsDatabaseName = './wallets/testWallets.json'
 const walletPath = path.posix.resolve(partialPath, walletsDatabaseName);
-const testWallet = require('./testWallets.json')
 const fs = require('fs')
 
-fs.writeFileSync(walletPath, JSON.stringify(testWallet))
-
+// Hack, copying over a file into a path which is BrowserFS mountable
+if (!fs.existsSync(walletPath)) {
+  const testWallet = require('./testWallets.json')
+  fs.writeFileSync(walletPath, JSON.stringify(testWallet))
+}
 //(config.env === 'TEST' || config.env === 'DEVELOPMENT') ? 'testWallets.json' : 'wallets.json';
 const walletAdapter = new FileSync(walletPath);
 const walletsDatabaseObject = low(walletAdapter);
