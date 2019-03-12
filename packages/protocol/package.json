@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "@democracy.js/keys": "0.0.4",
+    "@democracy.js/utils": "0.1.0",
+    "democracy.js": "0.2.5",
     "ethjs": "0.4.0",
     "openzeppelin-solidity": "2.0.0"
   },

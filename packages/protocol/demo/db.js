@@ -12,14 +12,20 @@ const path = require('path');
 // internal dependencies
 const config = require('./config');
 
-
 const partialPath = path.posix.resolve(__dirname, '');
 
 const adapter = new FileSync(path.posix.resolve(partialPath, config.db));
 const databaseObject = low(adapter);
 
-const walletsDatabaseName = (config.env === 'TEST' || config.env === 'DEVELOPMENT') ? 'testWallets.json' : 'wallets.json';
-const walletAdapter = new FileSync(path.posix.resolve(partialPath, walletsDatabaseName));
+const walletsDatabaseName = './wallets/testWallets.json'
+const walletPath = path.posix.resolve(partialPath, walletsDatabaseName);
+const testWallet = require('./testWallets.json')
+const fs = require('fs')
+
+fs.writeFileSync(walletPath, JSON.stringify(testWallet))
+
+//(config.env === 'TEST' || config.env === 'DEVELOPMENT') ? 'testWallets.json' : 'wallets.json';
+const walletAdapter = new FileSync(walletPath);
 const walletsDatabaseObject = low(walletAdapter);
 
 // Set some defaults (required if your JSON file is empty)

@@ -17,7 +17,7 @@ const setup = {};
 const { SIGNATURES_PER_FILE } = require('../params');
 const bn128 = require('../bn128');
 
-const partialPath = path.posix.resolve(__dirname, '../setupDatabase');
+const partialPath = path.posix.resolve(__dirname, '../trustedSetup/setupDatabase');
 const compressionMask = new BN('8000000000000000000000000000000000000000000000000000000000000000', 16);
 
 /**

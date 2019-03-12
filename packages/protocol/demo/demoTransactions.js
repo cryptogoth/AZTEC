@@ -137,6 +137,8 @@ async function demoTransactions(mint = false) {
     console.log('third join-split transaction mined');
 }
 
+module.exports = demoTransactions
+
 if (config.env === 'MAINNET') {
     demoTransactions(false).then(() => {
         web3.currentProvider.connection.close();
