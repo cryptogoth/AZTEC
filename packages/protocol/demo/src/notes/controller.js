@@ -10,7 +10,20 @@ const db = require('./db');
 const { NOTE_STATUS } = require('../../config');
 const wallets = require('../wallets');
 
+const { setImmutableKey, getImmutableKey, Logger } = require('@democracy.js/utils')
+const LOGGER = new Logger('notesController')
+const util = require('ethereumjs-util')
+const assert = require('chai').assert
+
 const noteController = {};
+
+noteController.constructKey = (noteHash, ownerAddress, status, aztecTokenAddress) => {
+    assert(util.isValidAddress(ownerAddress))
+    assert(util.isValidAddress(aztecTokenAddress))
+    assert.notEqual(ownerAddress, aztecTokenAddress)
+    assert.notEqual(['offchain','unspent','spent'].indexOf(status), -1)
+    return `/notes/${ownerAddress}/${aztecTokenAddress}/${status}/${noteHash}`
+}
 
 /**
  * Get a transaction by its note hash
@@ -18,7 +31,8 @@ const noteController = {};
  * @param {string} noteHash the keccak256 hash of the note coordinates
  * @returns {Object} the note object
  */
-noteController.get = (noteHash) => {
+noteController.get = (noteHash, bridgeAddress) => {
+    assert(util.isValidAddress(bridgeAddress))
     const rawNote = db.get(noteHash);
     if (!rawNote) {
         throw new Error(`could not find note at ${noteHash}`);
@@ -36,7 +50,9 @@ noteController.get = (noteHash) => {
  * @param {number} value the value of the note
  * @returns {Object} the note object
  */
-noteController.createNote = (owner, value) => {
+noteController.createNote = (owner, value, bridgeAddress) => {
+    assert(util.isValidAddress(owner))
+    //assert(util.isValidAddress(bridgeAddress))
     const wallet = wallets.get(owner);
     const note = aztec.note.create(wallet.publicKey, value);
     const exported = {
@@ -44,6 +60,10 @@ noteController.createNote = (owner, value) => {
         owner,
         status: NOTE_STATUS.OFF_CHAIN,
     };
+    const key = constructKey(
+    const key = `/notes/${owner}/${bridgeAddress}/offchain/${exported.noteHash}`
+    LOGGER.info('createNote', key, exported)
+    //setImmutableKey(key, exported)
     db.create(exported);
     return note;
 };
@@ -65,6 +85,10 @@ noteController.setNoteStatus = (noteHash, status) => {
         status,
     });
 };
+
+noteController.setUnspent = (noteHash, ownerAddress, aztecTokenAddress) => {
+    const key = 
+  
 
 /**
  * Construct a hex-formatted string containing the ephemeral keys for an array of notes.  
@@ -101,8 +125,8 @@ noteController.encodeMetadata = (noteArray) => {
  * @returns {module:notesController~Proof} The zero-knowledge proof data required to broadcast an AZTEC transaction
  */
 noteController.createConfidentialTransfer = async (inputNoteHashes, outputNoteData, v, senderAddress, aztecTokenAddress) => {
-    const inputNotes = inputNoteHashes.map(noteHash => noteController.get(noteHash));
-    const outputNotes = outputNoteData.map(([owner, value]) => noteController.createNote(owner, value));
+    const inputNotes = inputNoteHashes.map(noteHash => noteController.get(noteHash, ownerAddress, aztecTokenAddress));
+    const outputNotes = outputNoteData.map(([owner, value]) => noteController.createNote(owner, value, aztecTokenAddress));
     const m = inputNotes.length;
     const noteData = [...inputNotes.map(n => n.note), ...outputNotes];
 

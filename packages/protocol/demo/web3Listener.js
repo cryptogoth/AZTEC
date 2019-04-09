@@ -6,11 +6,13 @@
 const Web3 = require('web3');
 
 const config = require('./config');
+//const { getEndpointURL } = require('@democracy.js/utils')
+const URL = 'ws://ganache.arcology.nyc:8545'
 
-const web3 = new Web3(config.provider);
+const web3 = new Web3(URL);
 
 const listen = () => {
-    const provider = new Web3.providers.WebsocketProvider(config.provider);
+    const provider = new Web3.providers.WebsocketProvider(URL);
     provider.on('connect', () => {
         console.log('web3 connected');
     });

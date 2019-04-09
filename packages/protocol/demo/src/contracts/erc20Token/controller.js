@@ -12,12 +12,20 @@ const deployer = require('../../../deployer');
 const transactions = require('../../transactions');
 const wallets = require('../../wallets');
 
-const ERC20Mintable = require('../../../../build/contracts/ERC20Mintable.json');
+let ERC20Mintable = null;
+const fs = require('fs')
 
 const { TX_TYPES } = config;
 const { web3 } = deployer;
 
 const erc20 = {};
+
+erc20.loadJSON = async () => {
+  if (!ERC20Mintable) {
+    const source = fs.readFileSync('/api/compiles/truffle/ERC20Mintable.json').toString();
+    ERC20Mintable = JSON.parse(source);
+  }
+}
 
 /**
  * Get the ERC20 token's contract address
@@ -29,6 +37,7 @@ erc20.getContractAddress = async () => {
         return constants.DAI_ADDRESS;
     }
     const networkId = await deployer.getNetwork();
+    erc20.loadJSON();
     if (!ERC20Mintable.networks[networkId] || !ERC20Mintable.networks[networkId].address) {
         throw new Error(`ERC20Mintable.sol not deployed to network ${networkId}`);
     }

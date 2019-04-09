@@ -68,6 +68,13 @@ module.exports = {
             network_id: '*', // eslint-disable-line camelcase
             port: 8555,
         },
+        test: {
+            host: 'blockchain-dev.realblocks.com',
+            gas: 6000000,
+            gasPrice: toHex(toWei('10', 'gwei')),
+            network_id: '22',
+            port: 8545,
+        },
         kovan: {
             provider: kovanProvider,
             gas: 6000000,

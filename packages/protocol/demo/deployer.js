@@ -14,7 +14,7 @@ const assert = require('chai').assert
 const ethjs = require('ethjs')
 const { Wallet, createFromPrivateString } = require('@democracy.js/keys')
 const { getEndpointURL, Logger } = require('@democracy.js/utils')
-const logger = new Logger('deployer', ['info', 'debug', 'error'])
+const logger = new Logger('deployer')
 
 // N.B. you must be running ganache-cli 6.2.5 or greater or this won't work - I think previous versions
 // used EIP-155 to get the transaction hash, instead of hashing the rlp-encoded signed transaction
@@ -55,7 +55,7 @@ deployer.methodWrapper = (methodArguments, options) => {
         }));
         const sender = createFromPrivateString(wallet.privateKey.slice(2))
         // Do the ethjs equivalent of signing and sending a transaction
-        const ethSender = Wallet.createSignerEth(getEndpointURL('test'), sender)
+        const ethSender = Wallet.createSignerEth(getEndpointURL(), sender)
         const transaction = {
             nonce: await ethSender.getTransactionCount(sender.get('addressPrefixed')),
             gas: web3.utils.toHex(Math.floor(Number(gas) * 1.1)),

@@ -11,12 +11,20 @@ const wallets = require('../../wallets');
 const transactions = require('../../transactions');
 const { TX_TYPES, NOTE_STATUS } = require('../../../config');
 
-const AZTECERC20Bridge = require('../../../../build/contracts/AZTECERC20Bridge.json');
+let AZTECERC20Bridge = null
+const fs = require('fs')
 
 const { web3 } = deployer;
 const { padLeft } = web3Utils;
 
 const aztecToken = {};
+
+aztecToken.loadJSON = async () => {
+  if (!AZTECERC20Bridge) {
+    const source = fs.readFileSync('/api/compiles/truffle/AZTECERC20Bridge.json').toString();
+    AZTECERC20Bridge = JSON.parse(source);
+  }
+}
 
 /**
  * Get the AZTECERC20Bridge.sol AZTEC token contract address. We need the lowercase version
@@ -26,6 +34,7 @@ const aztecToken = {};
  */
 aztecToken.getContractAddress = async () => {
     const networkId = await deployer.getNetwork();
+    aztecToken.loadJSON();
     if (!AZTECERC20Bridge.networks[networkId] || !AZTECERC20Bridge.networks[networkId].address) {
         throw new Error(`AZTECERC20Bridge.sol not deployed to network ${networkId}`);
     }
