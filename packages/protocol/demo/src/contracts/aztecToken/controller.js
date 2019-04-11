@@ -21,7 +21,7 @@ const aztecToken = {};
 
 aztecToken.loadJSON = async () => {
   if (!AZTECERC20Bridge) {
-    const source = fs.readFileSync('/api/compiles/truffle/AZTECERC20Bridge.json').toString();
+    const source = fs.readFileSync('/api/compiles/AZTECERC20Bridge.json').toString();
     AZTECERC20Bridge = JSON.parse(source);
   }
 }

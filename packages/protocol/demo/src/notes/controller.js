@@ -60,7 +60,6 @@ noteController.createNote = (owner, value, bridgeAddress) => {
         owner,
         status: NOTE_STATUS.OFF_CHAIN,
     };
-    const key = constructKey(
     const key = `/notes/${owner}/${bridgeAddress}/offchain/${exported.noteHash}`
     LOGGER.info('createNote', key, exported)
     //setImmutableKey(key, exported)
@@ -85,10 +84,6 @@ noteController.setNoteStatus = (noteHash, status) => {
         status,
     });
 };
-
-noteController.setUnspent = (noteHash, ownerAddress, aztecTokenAddress) => {
-    const key = 
-  
 
 /**
  * Construct a hex-formatted string containing the ephemeral keys for an array of notes.  

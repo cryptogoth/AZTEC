@@ -6,8 +6,9 @@
 const Web3 = require('web3');
 
 const config = require('./config');
-//const { getEndpointURL } = require('@democracy.js/utils')
-const URL = 'ws://ganache.arcology.nyc:8545'
+const { getEndpointURL } = require('@democracy.js/utils')
+const host = getEndpointURL().split('://')[1]
+const URL = `ws://${host}`
 
 const web3 = new Web3(URL);
 
