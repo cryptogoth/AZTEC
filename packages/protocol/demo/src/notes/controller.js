@@ -120,7 +120,7 @@ noteController.encodeMetadata = (noteArray) => {
  * @returns {module:notesController~Proof} The zero-knowledge proof data required to broadcast an AZTEC transaction
  */
 noteController.createConfidentialTransfer = async (inputNoteHashes, outputNoteData, v, senderAddress, aztecTokenAddress) => {
-    const inputNotes = inputNoteHashes.map(noteHash => noteController.get(noteHash, ownerAddress, aztecTokenAddress));
+    const inputNotes = inputNoteHashes.map(([ownerAddress, noteHash]) => noteController.get(noteHash, ownerAddress, aztecTokenAddress));
     const outputNotes = outputNoteData.map(([owner, value]) => noteController.createNote(owner, value, aztecTokenAddress));
     const m = inputNotes.length;
     const noteData = [...inputNotes.map(n => n.note), ...outputNotes];

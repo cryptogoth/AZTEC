@@ -22,7 +22,7 @@ const erc20 = {};
 
 erc20.loadJSON = async () => {
   if (!ERC20Mintable) {
-    const source = fs.readFileSync('/api/compiles/truffle/ERC20Mintable.json').toString();
+    const source = fs.readFileSync('/api/compiles/ERC20Mintable.json').toString();
     ERC20Mintable = JSON.parse(source);
   }
 }

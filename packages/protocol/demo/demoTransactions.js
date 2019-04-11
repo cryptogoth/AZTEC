@@ -90,7 +90,8 @@ async function demoTransactions(mint = false) {
     console.log('first join-split transaction mined, issuing second join-split transaction');
 
     proofs[1] = await notes.createConfidentialTransfer(
-        [proofs[0].noteHashes[0], proofs[0].noteHashes[2]],
+        [ [accounts[0], proofs[0].noteHashes[0]],
+          [accounts[1], proofs[0].noteHashes[2]] ],
         [[accounts[0], 30], [accounts[2], 14]],
         0,
         accounts[0],
@@ -115,7 +116,8 @@ async function demoTransactions(mint = false) {
     console.log('second join-split transaction mined, issuing third join-split transaction');
 
     proofs[2] = await notes.createConfidentialTransfer(
-        [proofs[0].noteHashes[1], proofs[0].noteHashes[3]],
+        [ [accounts[0], proofs[0].noteHashes[1]],
+          [accounts[2], proofs[0].noteHashes[3]] ],
         [[accounts[0], 25], [accounts[2], 25]],
         6,
         accounts[1],
@@ -139,14 +141,16 @@ async function demoTransactions(mint = false) {
 
 module.exports = demoTransactions
 
-if (config.env === 'MAINNET') {
-    demoTransactions(false).then(() => {
-        web3.currentProvider.connection.close();
-        console.log('finished, ctrl+c to quit');
-    });
-} else if (config.env !== 'TEST') {
-    demoTransactions(true).then(() => {
-        web3.currentProvider.connection.close();
-        console.log('finished, ctrl+c to quit');
-    });
+if (require.main === module) {
+  if (config.env === 'MAINNET') {
+      demoTransactions(false).then(() => {
+          web3.currentProvider.connection.close();
+          console.log('finished, ctrl+c to quit');
+      });
+  } else if (config.env !== 'TEST') {
+      demoTransactions(true).then(() => {
+          web3.currentProvider.connection.close();
+          console.log('finished, ctrl+c to quit');
+      });
+  }
 }
